@@ -19,3 +19,6 @@ jobs:
           dotnet-version: 8.0.x
       - run: dotnet build runner/AiEngineeringLab.Evals/AiEngineeringLab.Evals.csproj --configuration Release
       - run: dotnet run --project runner/AiEngineeringLab.Evals/AiEngineeringLab.Evals.csproj --configuration Release -- --cases agents/dotnet-pr-reviewer/evals/cases.json --result runner/examples/dropped-cancellation.result.json
+      - run: dotnet build runner/AiEngineeringLab.Demo/AiEngineeringLab.Demo.csproj --configuration Release
+      - run: dotnet run --project runner/AiEngineeringLab.Demo/AiEngineeringLab.Demo.csproj --configuration Release -- --fixture agents/dotnet-pr-reviewer/evals/fixtures/dropped-cancellation
+      - run: dotnet run --project runner/AiEngineeringLab.Demo/AiEngineeringLab.Demo.csproj --configuration Release -- --fixture agents/dotnet-pr-reviewer/evals/fixtures/ambiguous-stream-ownership
