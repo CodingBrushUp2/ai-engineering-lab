@@ -1,0 +1,5 @@
+{
+  "caseId": "dropped-cancellation",
+  "expected": "finding",
+  "observed": "finding"
+}
