@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  eval-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet build runner/AiEngineeringLab.Evals/AiEngineeringLab.Evals.csproj --configuration Release
+      - run: dotnet run --project runner/AiEngineeringLab.Evals/AiEngineeringLab.Evals.csproj --configuration Release -- --result runner/examples/dropped-cancellation.result.json
