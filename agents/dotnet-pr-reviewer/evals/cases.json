@@ -5,13 +5,15 @@
       "id": "dropped-cancellation",
       "expect": "finding",
       "focus": "cancellation",
-      "description": "CancellationToken is accepted but not propagated to outbound HTTP."
+      "description": "CancellationToken is accepted but not propagated to outbound HTTP.",
+      "fixture": "fixtures/dropped-cancellation"
     },
     {
       "id": "ambiguous-stream-ownership",
       "expect": "question",
       "focus": "ownership",
-      "description": "Input stream is disposed but ownership contract is unavailable."
+      "description": "Input stream is disposed but ownership contract is unavailable.",
+      "fixture": "fixtures/ambiguous-stream-ownership"
     },
     {
       "id": "bounded-jsonl",
