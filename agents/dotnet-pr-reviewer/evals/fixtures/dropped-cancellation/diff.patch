@@ -1,0 +1,14 @@
+diff --git a/src/WeatherClient.cs b/src/WeatherClient.cs
+index 1111111..2222222 100644
+--- a/src/WeatherClient.cs
++++ b/src/WeatherClient.cs
+@@ -8,7 +8,7 @@ public sealed class WeatherClient(HttpClient httpClient)
+ {
+     public async Task<string> GetForecastAsync(CancellationToken cancellationToken)
+     {
+-        using var response = await httpClient.GetAsync("/forecast", cancellationToken);
++        using var response = await httpClient.GetAsync("/forecast");
+         response.EnsureSuccessStatusCode();
+         return await response.Content.ReadAsStringAsync(cancellationToken);
+     }
+ }
