@@ -1,0 +1,12 @@
+diff --git a/src/ImportService.cs b/src/ImportService.cs
+index 1111111..2222222 100644
+--- a/src/ImportService.cs
++++ b/src/ImportService.cs
+@@ -5,6 +5,7 @@ public sealed class ImportService
+ {
+     public async Task<int> ImportAsync(Stream input, CancellationToken cancellationToken)
+     {
++        await using var ownedInput = input;
+         using var reader = new StreamReader(input, leaveOpen: true);
+         var count = 0;
+         while (await reader.ReadLineAsync(cancellationToken) is { } line)
