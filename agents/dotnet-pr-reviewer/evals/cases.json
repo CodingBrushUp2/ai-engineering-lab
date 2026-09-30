@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "dropped-cancellation",
+      "expect": "finding",
+      "focus": "cancellation",
+      "description": "CancellationToken is accepted but not propagated to outbound HTTP."
+    },
+    {
+      "id": "ambiguous-stream-ownership",
+      "expect": "question",
+      "focus": "ownership",
+      "description": "Input stream is disposed but ownership contract is unavailable."
+    },
+    {
+      "id": "bounded-jsonl",
+      "expect": "no-finding",
+      "focus": "memory",
+      "description": "Bounded streaming must not trigger an invented whole-input memory warning."
+    },
+    {
+      "id": "breaking-contract",
+      "expect": "finding",
+      "focus": "compatibility",
+      "description": "A public response property is removed while an existing serialization test depends on it."
+    },
+    {
+      "id": "clean-change",
+      "expect": "no-finding",
+      "focus": "precision",
+      "description": "Correct cancellation, explicit ownership and relevant tests."
+    },
+    {
+      "id": "missing-context",
+      "expect": "question",
+      "focus": "uncertainty",
+      "description": "Helper behavior determines safety but helper source is unavailable."
+    }
+  ]
+}

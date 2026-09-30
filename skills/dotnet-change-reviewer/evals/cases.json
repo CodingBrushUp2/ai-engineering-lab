@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "cancellation-dropped",
+      "expect": "finding"
+    },
+    {
+      "id": "ownership-unknown",
+      "expect": "question"
+    },
+    {
+      "id": "bounded-processing",
+      "expect": "no-finding"
+    },
+    {
+      "id": "clean-change",
+      "expect": "no-finding"
+    }
+  ]
+}
