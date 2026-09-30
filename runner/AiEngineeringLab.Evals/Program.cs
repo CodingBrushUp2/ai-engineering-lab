@@ -1,32 +1,43 @@
 using System.Text.Json;
 
-if (args.Length != 2 || args[0] != "--result")
+if (args.Length != 4 || args[0] != "--cases" || args[2] != "--result")
 {
-    Console.Error.WriteLine("Usage: dotnet run --project runner/AiEngineeringLab.Evals -- --result <result.json>");
+    Console.Error.WriteLine("Usage: dotnet run --project runner/AiEngineeringLab.Evals -- --cases <cases.json> --result <result.json>");
     return 2;
 }
 
-var path = args[1];
-if (!File.Exists(path))
+var casesPath = args[1];
+var resultPath = args[3];
+if (!File.Exists(casesPath) || !File.Exists(resultPath))
 {
-    Console.Error.WriteLine($"Result file not found: {path}");
+    Console.Error.WriteLine("Cases or result file not found.");
     return 2;
 }
 
-var json = await File.ReadAllTextAsync(path);
-var result = JsonSerializer.Deserialize<EvalResult>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+var manifest = JsonSerializer.Deserialize<EvalManifest>(await File.ReadAllTextAsync(casesPath), options);
+var result = JsonSerializer.Deserialize<EvalResult>(await File.ReadAllTextAsync(resultPath), options);
 
-if (result is null || string.IsNullOrWhiteSpace(result.CaseId) || string.IsNullOrWhiteSpace(result.Observed))
+if (manifest?.Cases is null || result is null || string.IsNullOrWhiteSpace(result.CaseId) || string.IsNullOrWhiteSpace(result.Observed))
 {
-    Console.Error.WriteLine("Result must contain caseId and observed.");
+    Console.Error.WriteLine("Invalid cases or result document.");
     return 2;
 }
 
-var expected = result.Expected?.Trim().ToLowerInvariant();
+var evalCase = manifest.Cases.SingleOrDefault(x => string.Equals(x.Id, result.CaseId, StringComparison.Ordinal));
+if (evalCase is null)
+{
+    Console.Error.WriteLine($"Unknown caseId: {result.CaseId}");
+    return 2;
+}
+
+var expected = evalCase.Expect.Trim().ToLowerInvariant();
 var observed = result.Observed.Trim().ToLowerInvariant();
-var passed = expected is not null && expected == observed;
+var passed = expected == observed;
 
-Console.WriteLine($"{result.CaseId}: {(passed ? "PASS" : "FAIL")} (expected={expected ?? "<missing>"}, observed={observed})");
+Console.WriteLine($"{result.CaseId}: {(passed ? "PASS" : "FAIL")} (expected={expected}, observed={observed})");
 return passed ? 0 : 1;
 
-internal sealed record EvalResult(string CaseId, string? Expected, string Observed);
+internal sealed record EvalManifest(int Version, EvalCase[] Cases);
+internal sealed record EvalCase(string Id, string Expect);
+internal sealed record EvalResult(string CaseId, string Observed);
