@@ -1,5 +1,6 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AiEngineeringLab.Demo.Review;
 
@@ -11,5 +12,14 @@ internal static class ReviewJson
     {
         WriteIndented = true,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    };
+
+    /// <summary>
+    /// For reading untrusted reviewer output. Unknown properties are rejected instead of ignored.
+    /// Missing or null properties are caught afterwards by <see cref="ReviewResultValidator"/>.
+    /// </summary>
+    public static readonly JsonSerializerOptions StrictInput = new(JsonSerializerDefaults.Web)
+    {
+        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
     };
 }

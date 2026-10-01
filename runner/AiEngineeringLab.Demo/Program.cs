@@ -1,11 +1,19 @@
 using System.Text.Json;
+using AiEngineeringLab.Demo.OpenAi;
 using AiEngineeringLab.Demo.Review;
 
 const string Usage =
-    "Usage: dotnet run --project runner/AiEngineeringLab.Demo -- --fixture <fixture-directory> [--record <observation.json>]";
+    "Usage: dotnet run --project runner/AiEngineeringLab.Demo -- --fixture <fixture-directory> [--reviewer reference|openai] [--record <observation.json>]";
 
-var options = ParseOptions(args, ["--fixture", "--record"]);
+var options = ParseOptions(args, ["--fixture", "--reviewer", "--record"]);
 if (options is null || !options.TryGetValue("--fixture", out var fixtureDirectory))
+{
+    Console.Error.WriteLine(Usage);
+    return 2;
+}
+
+var reviewerChoice = options.GetValueOrDefault("--reviewer", "reference");
+if (reviewerChoice is not ("reference" or "openai"))
 {
     Console.Error.WriteLine(Usage);
     return 2;
@@ -29,10 +37,47 @@ catch (FileNotFoundException ex)
     return 2;
 }
 
-IChangeReviewer reviewer = new ReferenceChangeReviewer();
-const string reviewerName = "reference";
+// The reference reviewer needs no network. The model-backed reviewer is opt-in and reads its
+// configuration from environment variables, so CI never makes paid calls by default.
+IChangeReviewer reviewer;
+string reviewerName;
+using var httpClient = reviewerChoice == "openai" ? new HttpClient { Timeout = TimeSpan.FromSeconds(120) } : null;
+if (httpClient is not null)
+{
+    if (!OpenAiCompatibleOptions.TryFromEnvironment(Environment.GetEnvironmentVariable, out var openAiOptions, out var configurationError))
+    {
+        Console.Error.WriteLine(configurationError);
+        return 2;
+    }
 
-var result = await reviewer.ReviewAsync(input, cancellation.Token);
+    var openAiReviewer = new OpenAiCompatibleChangeReviewer(httpClient, openAiOptions);
+    reviewer = openAiReviewer;
+    reviewerName = openAiReviewer.Name;
+}
+else
+{
+    reviewer = new ReferenceChangeReviewer();
+    reviewerName = "reference";
+}
+
+ReviewResult result;
+try
+{
+    result = await reviewer.ReviewAsync(input, cancellation.Token);
+}
+catch (ReviewFailedException ex)
+{
+    Console.Error.WriteLine($"Review failed ({reviewerName}): {ex.Message}");
+    if (ex.RawOutput is not null)
+        Console.Error.WriteLine($"Raw model output:{Environment.NewLine}{ex.RawOutput}");
+    return 1;
+}
+catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+{
+    Console.Error.WriteLine("Review cancelled.");
+    return 1;
+}
+
 Console.WriteLine(JsonSerializer.Serialize(result, ReviewJson.Output));
 
 if (options.TryGetValue("--record", out var recordPath))
