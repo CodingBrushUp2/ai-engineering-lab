@@ -20,5 +20,9 @@ jobs:
       - run: dotnet build runner/AiEngineeringLab.Evals/AiEngineeringLab.Evals.csproj --configuration Release
       - run: dotnet run --project runner/AiEngineeringLab.Evals/AiEngineeringLab.Evals.csproj --configuration Release -- --cases agents/dotnet-pr-reviewer/evals/cases.json --result runner/examples/dropped-cancellation.result.json
       - run: dotnet build runner/AiEngineeringLab.Demo/AiEngineeringLab.Demo.csproj --configuration Release
+      - run: dotnet test runner/AiEngineeringLab.Demo.Tests/AiEngineeringLab.Demo.Tests.csproj --configuration Release
       - run: dotnet run --project runner/AiEngineeringLab.Demo/AiEngineeringLab.Demo.csproj --configuration Release -- --fixture agents/dotnet-pr-reviewer/evals/fixtures/dropped-cancellation
       - run: dotnet run --project runner/AiEngineeringLab.Demo/AiEngineeringLab.Demo.csproj --configuration Release -- --fixture agents/dotnet-pr-reviewer/evals/fixtures/ambiguous-stream-ownership
+      # Record an observation from the deterministic reviewer and score it with the existing evaluator.
+      - run: dotnet run --project runner/AiEngineeringLab.Demo/AiEngineeringLab.Demo.csproj --configuration Release -- --fixture agents/dotnet-pr-reviewer/evals/fixtures/dropped-cancellation --record "$RUNNER_TEMP/dropped-cancellation.observation.json"
+      - run: dotnet run --project runner/AiEngineeringLab.Evals/AiEngineeringLab.Evals.csproj --configuration Release -- --cases agents/dotnet-pr-reviewer/evals/cases.json --result "$RUNNER_TEMP/dropped-cancellation.observation.json"

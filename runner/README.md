@@ -14,4 +14,6 @@ dotnet run --project runner/AiEngineeringLab.Evals -- \
 
 Exit code 0 means the observed outcome matches the canonical expectation. Exit code 1 means the case failed. Invalid input returns 2.
 
-V1 is not an LLM harness yet. Next, the manifests need complete input fixtures and richer assertions before a provider adapter is added.
+The runner scores one recorded observation at a time. Observations can come from the deterministic reference reviewer or from an opt-in model-backed reviewer; see [AiEngineeringLab.Demo](AiEngineeringLab.Demo/README.md) for how to produce one with `--record`. CI only uses the reference reviewer and never calls a model.
+
+Scoring is still coarse (`finding` / `question` / `no-finding`). Richer assertions, for example checking the finding's location or evidence, are future work.

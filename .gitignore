@@ -1,0 +1,17 @@
+# .NET build output
+bin/
+obj/
+TestResults/
+
+# Local secrets and environment files. API keys are read from environment variables only.
+.env
+.env.*
+
+# Local review recordings (for example real-model runs). Commit curated examples deliberately, not by accident.
+artifacts/
+
+# Editor and OS noise
+.vs/
+.idea/
+*.user
+.DS_Store

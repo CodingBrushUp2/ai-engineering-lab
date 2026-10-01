@@ -18,6 +18,7 @@ The goal is not to collect prompts. Each artifact should have a narrow purpose, 
 agents/       Agent workflows and their evaluations
 skills/       Reusable capabilities with explicit contracts
 experiments/  Focused comparisons and recorded results
+runner/       .NET evaluation and review runners
 ```
 
 Artifacts created in this repository are kept separate from third-party work. If external agents or skills are studied or adapted later, their source, license and attribution will be recorded explicitly.
@@ -33,7 +34,7 @@ Artifacts created in this repository are kept separate from third-party work. If
 
 ## Status
 
-Experimental. The first artifacts are specifications and evaluation fixtures. A small runner will follow so behavior can be measured across model and configuration changes.
+Experimental. The PR review agent has a specification, evaluation fixtures, a small evaluation runner and a review runner with a deterministic reference reviewer and an opt-in, model-backed reviewer for OpenAI-compatible endpoints. See [runner/](runner/).
 
 ## License
 

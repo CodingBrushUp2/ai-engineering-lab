@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Review types stay internal; the test project exercises them directly. -->
+    <InternalsVisibleTo Include="AiEngineeringLab.Demo.Tests" />
+  </ItemGroup>
 </Project>
